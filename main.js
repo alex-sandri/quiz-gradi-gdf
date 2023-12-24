@@ -59,7 +59,7 @@ const ruoli = {
 const gradi = Object.values(ruoli).flat();
 
 const getImagePath = (name) =>
-  `/img/${name.toLowerCase().replaceAll(' ', '-')}.jpeg`;
+  `./img/${name.toLowerCase().replaceAll(' ', '-')}.jpeg`;
 
 const buildSelectMenu = (grado) => {
   const select = document.createElement('select');
