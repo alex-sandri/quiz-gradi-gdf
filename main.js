@@ -56,6 +56,8 @@ const ruoli = {
   */
 };
 
+const gradi = Object.values(ruoli).flat();
+
 const getImagePath = (name) =>
   `/img/${name.toLowerCase().replaceAll(' ', '-')}.jpeg`;
 
@@ -68,9 +70,7 @@ const buildSelectMenu = (grado) => {
 
   select.options.add(defaultOption);
 
-  const gradi = shuffle(Object.values(ruoli).flat());
-
-  for (const grado of gradi) {
+  for (const grado of shuffle(gradi)) {
     const option = new Option();
     option.text = grado;
     option.value = grado;
@@ -81,49 +81,46 @@ const buildSelectMenu = (grado) => {
   return select;
 }
 
-
 /**
  * source: https://www.freecodecamp.org/news/how-to-shuffle-an-array-of-items-using-javascript-or-typescript/
  */
 const shuffle = (array) => {
-  for (let i = array.length - 1; i > 0; i--) { 
-    const j = Math.floor(Math.random() * (i + 1)); 
-    [array[i], array[j]] = [array[j], array[i]]; 
+  const arrayCopy = [...array];
+
+  for (let i = arrayCopy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arrayCopy[i], arrayCopy[j]] = [arrayCopy[j], arrayCopy[i]];
   }
 
-  return array; 
-}; 
+  return arrayCopy;
+};
 
 const main = document.querySelector('main');
 
-for (const ruolo in ruoli) {
-  main.insertAdjacentHTML('beforeend', `<h2>${ruolo}</h2>`);
+for (const grado of shuffle(gradi)) {
+  const container = document.createElement('div');
+  container.classList.add('grado');
 
-  for (const grado of ruoli[ruolo]) {
-    const container = document.createElement('div');
-    container.classList.add('grado');
+  const img = new Image();
+  img.src = getImagePath(grado);
 
-    const img = new Image();
-    img.src = getImagePath(grado);
+  container.append(img);
+  container.append(buildSelectMenu(grado));
 
-    container.append(img);
-    container.append(buildSelectMenu(grado));
+  {
+    const correctValueContainer = document.createElement('p');
+    correctValueContainer.innerText = 'Valore corretto: ';
+    correctValueContainer.classList.add('correct-value');
 
-    {
-      const correctValueContainer = document.createElement('p');
-      correctValueContainer.innerText = 'Valore corretto: ';
-      correctValueContainer.classList.add('correct-value');
+    const correctValueElement = document.createElement('b');
+    correctValueElement.innerText = grado;
+    correctValueElement.classList.add('hidden');
 
-      const correctValueElement = document.createElement('b');
-      correctValueElement.innerText = grado;
-      correctValueElement.classList.add('hidden');
-
-      correctValueContainer.append(correctValueElement);
-      container.append(correctValueContainer);
-    }
-
-    main.append(container);
+    correctValueContainer.append(correctValueElement);
+    container.append(correctValueContainer);
   }
+
+  main.append(container);
 }
 
 const checkButton = document.createElement('button');
